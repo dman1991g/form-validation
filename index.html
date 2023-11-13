@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>My Basic Form</title>
+</head>
+<body>
+   <!-- Heading for the form -->
+   <h1 style="text-align:center;">Newsletter Sign-Up</h1>
+   <!-- Form starts here -->
+   <form name="MyForm" method="Post" action="thankyou.html">
+     <div style="text-align:center;">
+       <!-- Input fields for name, email, and phone number -->
+       <input type="text" name="fullname" placeholder="Your name">
+       <input type="text" name="email" placeholder="Your email">
+       <input type="tel" name="phone" placeholder="Your phone number" maxlength="12">
+       <!-- Submit button for the form -->
+       <input type="submit" name="submit" value="Submit" onClick="javascript:return validateInputs();">
+    </div>
+   </form>
+<script>
+// Function to validate form inputs
+function validateInputs() {
+    // Variable declarations
+    var SubmitForm = true;
+    var FormErrors = "";
+    // Fetching values from form fields
+    var fullname = document.MyForm.fullname.value.trim();
+    var email = document.MyForm.email.value.trim();
+    var phone = document.MyForm.phone.value.trim();
+
+    // Checking if if there are any empty fields 
+    if (fullname.length < 1 || email.length < 1 || phone.length < 1) {
+        FormErrors = "All fields are mandatory. Please complete the form.";
+        SubmitForm = false;
+    } else {
+        // Checking for correct email format using a pattern
+        var filter = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        if (!filter.test(email)) {
+            FormErrors = "Invalid email. Please correct your email address.";
+            SubmitForm = false;
+        }
+    }
+
+    // Displaying an error message if one is available
+    if (SubmitForm === false) {
+        alert(FormErrors);
+        return false;
+    } else {
+        // Sanitizing inputs to remove any unwanted characters
+        fullname = fullname.replace(/[^a-z0-9\s\-]/gim,"");
+        fullname = fullname.trim();
+        email = email.replace(/[^a-z0-9_@.-]/gim,"");
+        email = email.trim();
+        phone = phone.replace(/[^0-9\-]/gim, "");
+        var sanitizedPhone = phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+        document.MyForm.phone.value = sanitizedPhone;
+
+        // Log successful submission to console
+        console.log("Form submitted successfully:");
+        console.log("Name: " + fullname);
+        console.log("Email: " + email);
+        console.log("Phone: " + sanitizedPhone);
+
+        // resets the form after successful submission
+        document.MyForm.reset();
+        
+        // Simulating form submission
+        return false; // For demonstration purpose
+    }
+}
+
+// Function to format the phone number as the user types
+document.MyForm.phone.addEventListener('input', function (e) {
+    var phone = e.target.value.replace(/\D/g, '');
+    var formattedPhone = '';
+    if (phone.length > 0) {
+        formattedPhone = phone.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/).slice(1).join('-');
+    }
+    e.target.value = formattedPhone;
+});
+</script>
+</body>
+</html>
